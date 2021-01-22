@@ -1,7 +1,11 @@
+import toml
 from stackoverflow import StackOverflow
 
+with open("./config.toml", mode="r") as config_file:
+    config = toml.load(config_file)
+
 # Create the connection 
-connection = StackOverflow("your_email_address", "your_password")
+connection = StackOverflow(config["user"]["email"], configp["user"]["password"], config["notifications"]["webhook"])
 
 # Login and check if the user is logged
 connection.login()
