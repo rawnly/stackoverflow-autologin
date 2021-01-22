@@ -1,4 +1,4 @@
-from login import StackOverflow
+from stackoverflow import StackOverflow
 
 # Create the connection 
 connection = StackOverflow("your_email_address", "your_password")
