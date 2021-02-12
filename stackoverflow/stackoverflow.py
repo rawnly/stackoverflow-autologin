@@ -35,8 +35,9 @@ class StackOverflow(object):
     WEBHOOK_URL = ""
 
     # Regex
-    REGEX_USER_ID = re.compile(r'<a href="/users/([0-9]{1,})/(\w+)" .*?>')
+    REGEX_USER_ID  = re.compile(r'<a href="/users/([0-9]{1,})/(\w+)" .*?>')
     REGEX_USERNAME = re.compile(r'<a href="/users/([0-9]{1,})/(\w+)" .*?>')
+    REGEX_COUNTER  = re.compile(r'<span class="ml-auto fs-caption" .*?>')
 
     # Initialize new session
     session = requests.session()

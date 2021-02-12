@@ -1,8 +1,10 @@
 import toml
 from stackoverflow import StackOverflow
+import os
 
-with open("./config.toml", mode="r") as config_file:
-    config = toml.load(config_file)
+config_path = "{folder}/config.toml".format(folder=os.path.dirname(os.path.abspath(__file__)))
+
+config = toml.load(config_path)
 
 # Create the connection 
 connection = StackOverflow(config["user"]["username"], config["user"]["password"], config["notifications"]["webhook"])
