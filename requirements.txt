@@ -1,2 +1,4 @@
 requests
 toml
+twilio
+beautifulsoup4

@@ -1,0 +1,12 @@
+[twilio]
+sid = ""
+token = ""
+to = ""
+from = ""
+
+[webhooks]
+discord = ""
+
+[credentials]
+username = ""
+password = ""

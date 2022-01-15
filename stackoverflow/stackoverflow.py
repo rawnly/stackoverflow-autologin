@@ -1,70 +1,53 @@
 #! /usr/bin/env python
-# -*- conding: utf8 -*-
 
 """StackOverflow Remote Login
     This module provides login to stackoverflow.com
 """
 
-import re
 import requests
+from bs4 import BeautifulSoup
+from typing import TypedDict, Optional
+
+
+class Form(TypedDict):
+    ssrc: str
+    email: str
+    password: str
+
+
+class User(TypedDict):
+    id: str
+    nick: str
+
+
+class Credentials(TypedDict):
+    username: Optional[str]
+    password: Optional[str]
 
 
 class StackOverflow(object):
-    """
-        :param email:
-        :param password:
-    """
-
     # Form action
-    ACTION = 'https://stackoverflow.com/users/login?\
-    ssrc=head&returnurl=https%3a%2f%2fstackoverflow.com%2f'
+    ACTION: str = 'https://stackoverflow.com/users/login'
 
     # Edit your profile (to check if user is logged)
-    check_login = 'https://stackoverflow.com/users/edit/'
+    check_login: str = 'https://stackoverflow.com/users/edit/'
 
     # Form data
-    FORM = {
-        "fkey": "96a951839d53e991ecd53c4fd6b9c729",
-        "submit-button": "Log in",
-        "ssrc": "head"
+    FORM: Form = {
+        "ssrc": "login"
     }
 
     # Initialize user's data
-    USER = {}
-
-    WEBHOOK_URL = ""
-
-    # Regex
-    REGEX_USER_ID  = re.compile(r'<a href="/users/([0-9]{1,})/(\w+)" .*?>')
-    REGEX_USERNAME = re.compile(r'<a href="/users/([0-9]{1,})/(\w+)" .*?>')
-    REGEX_COUNTER  = re.compile(r'<span class="ml-auto fs-caption" .*?>')
+    USER: User = {}
 
     # Initialize new session
     session = requests.session()
 
+    def __init__(self, credentials: Credentials):
+        self.FORM['email'] = credentials['username']
+        self.FORM['password'] = credentials['password']
 
-    def notify(self, message):
-        if self.WEBHOOK_URL == None:
-            return
-
-        self.session.post(self.WEBHOOK_URL, { "content": message })
-
-
-    def __init__(self, email, password, webhook_url = None):
-        """
-        :param email:
-        :param password:
-        """
-
-        # LOGIN: Email
-        self.FORM['email'] = email
-
-        # LOGIN: Password
-        self.FORM['password'] = password
-
-        self.WEBHOOK_URL = webhook_url
-
-    def login(self):
+    def login(self) -> bool:
         """
         :return:
         """
@@ -75,42 +58,40 @@ class StackOverflow(object):
         # Response from the site
         response = session.post(self.ACTION, data=self.FORM)
 
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        my_profile = soup.find(
+            "a",
+            {
+                "class": "my-profile"
+            }
+        )
+
         # if logged
-        if bool(self.REGEX_USER_ID.search(response.text)):
-            self.USER['id'] = self.REGEX_USER_ID.search(
-                response.text).groups()[0]
-            self.USER['nick'] = self.REGEX_USERNAME.search(
-                response.text).groups()[1]
+        if my_profile is not None:
+            href = my_profile.attrs["href"]
+
+            self.USER['id'] = href.split("/")[2]
+            self.USER['nick'] = href.split("/")[3]
+
             self.check_login = self.check_login + self.USER['id']
 
-            self.notify("Login Success!")
-            return response
+            return response.status_code == 200
 
-        self.notify("Login Failed")
         return False
 
-    def logged(self):
-        """
-        :return:
-        """
-
+    def logged(self) -> bool:
         # Current session
         session = self.session
 
         # Try to edit profile and get "status code"
-        status = session.get(self.check_login).status_code
+        response = session.get(self.check_login)
 
-        # If 200 / OK
-        if status == 200:
-            return True
+        print(response.status_code)
 
-        return False
+        return response.status_code == 200
 
-    def close(self):
-        """
-            :return True:
-        """
-
+    def close(self) -> bool:
         # Current session
         session = self.session
 
