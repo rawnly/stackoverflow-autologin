@@ -26,6 +26,3 @@ jobs:
     - name: Login & Notify
       run: |
         python main.py
-      env:
-        STACKOVERFLOW_USERNAME: {{ secrets.STACKOVERFLOW_USERNAME }}
-        STACKOVERFLOW_PASSWORD: {{ secrets.STACKOVERFLOW_PASSWORD }}
