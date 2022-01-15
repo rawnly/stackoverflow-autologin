@@ -1,2 +1,4 @@
 .DS_Store
-me.py
+config.toml
+.idea
+__pycache__
