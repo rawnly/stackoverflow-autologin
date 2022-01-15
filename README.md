@@ -26,7 +26,7 @@ You can setup the environment using ENV variables, names are pretty self explana
 
 <small>NOTE: **BOLD** variables are required.</small>
 
-Otherwise if you're running it locally you can setup a config  `toml` file ([example configuration](./config-example.toml)). 
+Otherwise if you're running it locally you can setup a config  `toml` file ([example configuration](./example-config.toml)). 
 Filename can be customised via the env variable `CONFIG_FILE` (default is `config.toml`)
 
 To run the script just execute the `main.py`
