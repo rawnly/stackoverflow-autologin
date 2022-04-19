@@ -25,7 +25,7 @@ class NotificationManager(object):
     def __init__(self, twilio_config: TwilioConfig = None, webhooks: WebHooksConfig = None):
         self.WEBHOOKS = webhooks
 
-        if twilio_config is not None:
+        if twilio_config is not None and twilio_config['sid'] is not None and twilio_config['token'] is not None:
             self.twilio = Client(twilio_config['sid'], twilio_config['token'])
             self.SMS_TO = twilio_config['to']
             self.SMS_FROM = twilio_config['sender']
